@@ -34,7 +34,7 @@ A full-featured Flask application to manage and track swim workouts for students
 
 ## 🖥 Screenshots
 
-![Timer View](timer_window.png)
+![Timer View](timer_window)
 
 ## 🧪 How to Run
 
