@@ -202,7 +202,7 @@ def launch_timer_window(workouts):
 
         notes = workout_list[0].get('notes')
         if notes:
-            tk.Label(content_frame, text=f"Note: {notes}", font=("Arial", 25, "italic"), bg="#ffffff", fg="#19191b", wraplength=box_width-40, justify="center").pack(pady=0)
+            tk.Label(content_frame, text=f"Note: {notes}", font=("Arial", 20, "italic"), bg="#ffffff", fg="#19191b", wraplength=box_width-40, justify="center").pack(pady=0)
 
         workout_labels.append(workout_label)
         reps_labels.append(reps_label)
