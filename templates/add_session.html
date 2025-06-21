@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <h3 class="card-title text-center text-primary mb-4">🗓️ Add New Session</h3>
+                    
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Session Date <span class="text-danger">*</span></label>
+                            <input type="date" name="session_date" class="form-control form-control-lg rounded-pill" required />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Session Time <span class="text-danger">*</span></label>
+                            <select name="session_time" class="form-select form-select-lg rounded-pill" required>
+                                <option value="">Select AM/PM</option>
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </div>
+                        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-4">
+                                <i class="bi bi-plus-circle"></i> Add Session
+                            </button>
+                            <a href="{{ url_for('sessions', student_id=student_id) }}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

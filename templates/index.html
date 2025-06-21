@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-2">
+    <h2 class="fw-bold text-primary">👥 Students</h2>
+    <div class="d-flex flex-column flex-sm-row gap-2">
+      <a href="{{ url_for('add_student') }}" class="btn btn-success">
+        <i class="bi bi-person-plus-fill"></i> Add Student
+      </a>
+      <a href="{{ url_for('select_session') }}" class="btn btn-warning">
+        <i class="bi bi-play-circle-fill"></i> Start Session
+      </a>
+    </div>
+  </div>
+
+  {% if students %}
+  <div class="table-responsive shadow rounded">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-primary text-center">
+        <tr>
+          <th>Name</th>
+          <th>Call Sign</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        {% for s in students if s.status == 'active' %}
+        <tr>
+          <td class="text-start">{{ s.first_name }} {% if s.middle_name %}{{ s.middle_name }}{% endif %} {{ s.last_name }}</td>
+          <td>{{ s.call_sign or '-' }}</td>
+          <td>
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-1">
+              <a href="{{ url_for('sessions', student_id=s.id) }}" class="btn btn-sm btn-outline-primary">
+                View Sessions
+              </a>
+              <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteStudentModal{{ s.id }}">
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- 🔥 Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteStudentModal{{ s.id }}" tabindex="-1" aria-labelledby="deleteStudentModalLabel{{ s.id }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="POST" action="{{ url_for('delete_student', student_id=s.id) }}">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteStudentModalLabel{{ s.id }}">Confirm Deletion</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-start">
+                  Are you sure you want to remove student <strong>{{ s.first_name }} {{ s.last_name }}</strong>?
+                  <br><small class="text-muted">This will mark them as inactive. All sessions and data will be retained.</small>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-danger">Yes, Remove</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info mt-4" role="alert">
+    No students found. Click "Add Student" to begin.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

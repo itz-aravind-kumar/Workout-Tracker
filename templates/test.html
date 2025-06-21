@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Workout Timer Test</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  .student { border: 1px solid #ccc; padding: 10px; margin-bottom: 20px; }
+  .title { font-weight: bold; font-size: 1.2em; }
+</style>
+</head>
+<body>
+
+<div id="students-container"></div>
+
+<script>
+const studentWorkouts = {
+  "1": [
+    { sequence_number: 1, workout_type: "Warmup", repetitions: "3", duration: "00:00:05", first_name: "Alice", last_name: "Smith" },
+    { sequence_number: 2, workout_type: "Push-ups", repetitions: "2", duration: "00:00:10", first_name: "Alice", last_name: "Smith" }
+  ],
+  "2": [
+    { sequence_number: 1, workout_type: "Jog", repetitions: "1", duration: "00:00:07", first_name: "Bob", last_name: "Brown" }
+  ]
+};
+
+function parseDuration(duration) {
+  const [h, m, s] = duration.split(':').map(Number);
+  return h * 3600 + m * 60 + s;
+}
+
+function formatTime(seconds) {
+  const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
+  const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+  const secs = String(seconds % 60).padStart(2, '0');
+  return `${hrs}:${mins}:${secs}`;
+}
+
+const timers = {};
+
+function createStudentCard(student_id, workouts) {
+  const container = document.getElementById("students-container");
+
+  const card = document.createElement("div");
+  card.className = "student";
+  card.id = `student-card-${student_id}`;
+  
+  card.innerHTML = `
+    <div class="title">${workouts[0].first_name} ${workouts[0].last_name}</div>
+    <div>Sequence: <span id="sequence-${student_id}">-</span></div>
+    <div>Workout: <span id="workout-${student_id}">-</span></div>
+    <div>Reps: <span id="repetition-${student_id}">-</span></div>
+    <div>Timer: <span id="timer-${student_id}">--:--:--</span></div>
+    <div>Status: <span id="status-${student_id}">Starting...</span></div>
+  `;
+
+  container.appendChild(card);
+}
+
+function startWorkoutTimer(student_id, workouts) {
+  let currentIndex = 0;
+  let currentRep = 1;
+  let totalReps = parseInt(workouts[0].repetitions) || 1;
+  let remainingSeconds = parseDuration(workouts[0].duration);
+  let finished = false;
+
+  function updateUI() {
+    const workout = workouts[currentIndex];
+    document.getElementById(`sequence-${student_id}`).textContent = workout.sequence_number;
+    document.getElementById(`workout-${student_id}`).textContent = workout.workout_type;
+    document.getElementById(`repetition-${student_id}`).textContent = `x${currentRep} of x${totalReps}`;
+    document.getElementById(`timer-${student_id}`).textContent = formatTime(remainingSeconds);
+    document.getElementById(`status-${student_id}`).textContent = "Running...";
+  }
+
+  function completeWorkout() {
+    finished = true;
+    clearInterval(timers[student_id]);
+    document.getElementById(`status-${student_id}`).textContent = "🎉 Workout Complete!";
+    document.getElementById(`timer-${student_id}`).textContent = "✅ Done";
+  }
+
+  updateUI();
+
+  timers[student_id] = setInterval(() => {
+    if (finished) return;
+
+    if (remainingSeconds > 0) {
+      remainingSeconds--;
+      document.getElementById(`timer-${student_id}`).textContent = formatTime(remainingSeconds);
+    } else {
+      // End of current rep
+      if (currentRep < totalReps) {
+        currentRep++;
+        remainingSeconds = parseDuration(workouts[currentIndex].duration);
+        updateUI();
+      } else {
+        // Move to next workout sequence
+        currentIndex++;
+        if (currentIndex >= workouts.length) {
+          completeWorkout();
+        } else {
+          currentRep = 1;
+          totalReps = parseInt(workouts[currentIndex].repetitions) || 1;
+          remainingSeconds = parseDuration(workouts[currentIndex].duration);
+          updateUI();
+        }
+      }
+    }
+  }, 1000);
+}
+
+for (const student_id in studentWorkouts) {
+  createStudentCard(student_id, studentWorkouts[student_id]);
+  startWorkoutTimer(student_id, studentWorkouts[student_id]);
+}
+</script>
+
+</body>
+</html>

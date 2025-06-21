@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-sm border-0" style="background-color: #f9f9fb;">
+        <div class="card-body p-4">
+          <h3 class="card-title text-center mb-4 text-primary">Edit Workout #{{ workout.sequence_number }}</h3>
+          <form method="POST">
+
+            <!-- Workout Type -->
+            <div class="mb-3">
+              <label class="form-label">Workout Type</label>
+              <select name="workout_type" class="form-select" required>
+                {% for option in ['Warmup','Rest','Prep Time','Freestyle','Breaststroke','Backstroke','Butterfly','Drills','Legkick','Flykick on Back','Pulls','Dolphin kick','Underwater','Abovewater','Turns','Finish'] %}
+                <option value="{{ option }}" {% if workout.workout_type == option %}selected{% endif %}>{{ option }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Distance Dropdown -->
+            <div class="mb-3">
+              <label class="form-label">Distance (optional)</label>
+              <select name="distance" class="form-select">
+                <option value="">None</option>
+                {% for d in [25, 50, 75, 100, 150, 200, 400] %}
+                  <option value="{{ d }}" {% if workout.distance == d %}selected{% endif %}>{{ d }} meters</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Critical Velocity -->
+            <div class="form-check mb-3">
+              <input type="checkbox" id="cv_checkbox" name="critical_velocity" class="form-check-input" {% if workout.critical_velocity %}checked{% endif %}>
+              <label class="form-check-label" for="cv_checkbox">Critical Velocity (CV)</label>
+            </div>
+
+            <!-- Repetitions -->
+            <div class="mb-3">
+              <label class="form-label">Repetitions</label>
+              <input type="number" name="repetitions" id="repetitions" class="form-control" value="{{ workout.repetitions }}" min="1" required>
+            </div>
+
+            <!-- Duration(s) -->
+            <div id="duration_fields">
+              {% if workout.critical_velocity %}
+                {% for i in range(workout.repetitions) %}
+                <div class="mb-2">
+                  <label class="form-label">Rep Duration {{ i+1 }} (HH:MM:SS)</label>
+                  <input type="text" name="duration_{{ i+1 }}" class="form-control" value="{{ rep_durations[i] }}"  required>
+                </div>
+                {% endfor %}
+              {% else %}
+              <div class="mb-3">
+                <label class="form-label">Duration (HH:MM:SS)</label>
+                <input type="text" name="duration" class="form-control" value="{{ workout.duration }}"  required>
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Notes -->
+            <div class="mb-3">
+              <label class="form-label">Notes</label>
+              <textarea name="notes" class="form-control" rows="3" placeholder="Optional notes...">{{ workout.notes or '' }}</textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-success">Save Changes</button>
+              <a href="{{ url_for('workouts', session_id=workout.session_id) }}" class="btn btn-secondary">Cancel</a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS for dynamic CV fields -->
+<script>
+  const cvCheckbox = document.getElementById('cv_checkbox'),
+        repsInput = document.getElementById('repetitions'),
+        durationContainer = document.getElementById('duration_fields');
+
+  function refreshEditFields() {
+    const isCV = cvCheckbox.checked;
+    const reps = parseInt(repsInput.value) || 1;
+    const existing = JSON.parse('{{ rep_durations | default([]) | tojson | safe }}');
+    durationContainer.innerHTML = '';
+
+    if (isCV) {
+      for (let i = 1; i <= reps; i++) {
+        const val = existing[i - 1] || '';
+        durationContainer.insertAdjacentHTML('beforeend', `
+          <div class="mb-2">
+            <label class="form-label">Rep Duration ${i} (HH:MM:SS)</label>
+            <input type="text" name="duration_${i}" class="form-control" value="${val}" placeholder="e.g. 00:01:30" required>
+          </div>`);
+      }
+    } else {
+      durationContainer.innerHTML = `
+        <div class="mb-3">
+          <label class="form-label">Duration (HH:MM:SS)</label>
+          <input type="text" name="duration" class="form-control" value="{{ workout.duration }}" placeholder="e.g. 00:01:30" required>
+        </div>`;
+    }
+  }
+
+  cvCheckbox.addEventListener('change', refreshEditFields);
+  repsInput.addEventListener('input', refreshEditFields);
+</script>
+{% endblock %}
+
+
