@@ -15,8 +15,8 @@ def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Potter5595",
-        database="studentdb"
+        password="",
+        database=""
     )
 
 @app.route('/toggle_status/<int:student_id>', methods=['POST'])
