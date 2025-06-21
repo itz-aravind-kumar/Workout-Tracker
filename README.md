@@ -14,7 +14,7 @@ A full-featured Flask application to manage and track swim workouts for students
 
 ## 🗃 Database Schema Overview
 
-![ER Diagram](workout_tracker_er_diagram.png)
+![ER Diagram](timer_window)
 
 ### Tables
 
