@@ -41,14 +41,8 @@ A full-featured Flask application to manage and track swim workouts for students
   <img src="screenshots/img5.jpg" width="30%" />
   <img src="screenshots/img6.jpg" width="30%" />
 </p>
-<p align="center">
-  <b>Home</b> &nbsp;&nbsp;&nbsp;&nbsp;
-  <b>Workout Timer</b> &nbsp;&nbsp;&nbsp;&nbsp;
-  <b>Details Page</b>
-</p>
 
 
-![Timer View](timer_window)
 
 ## 🧪 How to Run
 
