@@ -12,9 +12,7 @@ A full-featured Flask application to manage and track swim workouts for students
 - 💾 MySQL Database Integration
 - 🎯 Repetition-wise and Session-wise Tracking
 
-## 🗃 Database Schema Overview
 
-![ER Diagram](timer_window)
 
 ### Tables
 
